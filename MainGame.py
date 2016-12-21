@@ -1,5 +1,5 @@
 import arcade
-from MainGameTracker import PlayerBtnInfo
+from MainGameTracker import GameTracker
 
 SCREEN_WIDTH = 900
 SCREEN_HEIGHT = 600
@@ -9,7 +9,7 @@ class MainGameWindow(arcade.Window):
         super().__init__(width, height)
         arcade.set_background_color(arcade.color.WHITE)
 
-        self.playerBtnInfo = PlayerBtnInfo()
+        self.gameTracker = GameTracker()
 
     def on_draw(self):
         player_1_btn_position_x = 100
@@ -20,10 +20,10 @@ class MainGameWindow(arcade.Window):
 
         arcade.start_render()
         for i in range(6):
-            arcade.draw_text(str(self.playerBtnInfo.player_1_btn[i]),
+            arcade.draw_text(str(self.gameTracker.playerBtnInfo.player_1_btn[i]),
                 player_1_btn_position_x + (i * player_btn_x_offset),
                 player_1_btn_position_y, arcade.color.BLACK, 30);
-            arcade.draw_text(str(self.playerBtnInfo.player_2_btn[i]),
+            arcade.draw_text(str(self.gameTracker.playerBtnInfo.player_2_btn[i]),
                 player_2_btn_position_x + (i * player_btn_x_offset),
                 player_2_btn_position_y, arcade.color.BLACK, 30);
 

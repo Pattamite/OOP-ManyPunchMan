@@ -1,6 +1,11 @@
 import arcade
 import random
 
+class GameTracker:
+
+    def __init__(self):
+        self.playerBtnInfo = PlayerBtnInfo()
+
 class PlayerBtnInfo:
 
     def __init__(self):
