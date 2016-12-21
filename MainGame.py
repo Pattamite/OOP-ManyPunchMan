@@ -22,10 +22,10 @@ class MainGameWindow(arcade.Window):
         for i in range(6):
             arcade.draw_text(str(self.playerBtnInfo.player_1_btn[i]),
                 player_1_btn_position_x + (i * player_btn_x_offset),
-                player_1_btn_position_y, arcade.color.BLACK, 12);
+                player_1_btn_position_y, arcade.color.BLACK, 30);
             arcade.draw_text(str(self.playerBtnInfo.player_2_btn[i]),
                 player_2_btn_position_x + (i * player_btn_x_offset),
-                player_2_btn_position_y, arcade.color.BLACK, 12);
+                player_2_btn_position_y, arcade.color.BLACK, 30);
 
 
 if __name__=='__main__':
