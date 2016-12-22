@@ -1,4 +1,5 @@
 import arcade
+import math
 from MainGameTracker import GameTracker
 
 SCREEN_WIDTH = 900
@@ -30,6 +31,7 @@ class MainGameWindow(arcade.Window):
         self.draw_btn()
         self.draw_score()
         self.draw_combo()
+        self.draw_phase()
 
     def draw_btn(self):
         player_1_btn_position_x = 70
@@ -46,6 +48,19 @@ class MainGameWindow(arcade.Window):
                 , player_2_btn_position_x + (i * player_btn_x_offset)
                 , player_2_btn_position_y)
 
+    def draw_arrow(self, arrow, x, y):
+        if arrow == self.gameTracker.playerBtnInfo.BTN_UP:
+            arcade.draw_texture_rectangle(x, y, self.arrow_texture_size
+            , self.arrow_texture_size, self.arrow_up_texture)
+        elif arrow == self.gameTracker.playerBtnInfo.BTN_LEFT:
+            arcade.draw_texture_rectangle(x, y, self.arrow_texture_size
+            , self.arrow_texture_size, self.arrow_left_texture)
+        elif arrow == self.gameTracker.playerBtnInfo.BTN_RIGHT:
+            arcade.draw_texture_rectangle(x, y, self.arrow_texture_size
+            , self.arrow_texture_size, self.arrow_right_texture)
+        elif arrow == self.gameTracker.playerBtnInfo.BTN_DOWN:
+            arcade.draw_texture_rectangle(x, y, self.arrow_texture_size
+            , self.arrow_texture_size, self.arrow_down_texture)
 
     def draw_score(self):
         player_1_score_position_x = 400
@@ -124,19 +139,59 @@ class MainGameWindow(arcade.Window):
         else:
             return 40
 
-    def draw_arrow(self, arrow, x, y):
-        if arrow == self.gameTracker.playerBtnInfo.BTN_UP:
-            arcade.draw_texture_rectangle(x, y, self.arrow_texture_size
-            , self.arrow_texture_size, self.arrow_up_texture)
-        elif arrow == self.gameTracker.playerBtnInfo.BTN_LEFT:
-            arcade.draw_texture_rectangle(x, y, self.arrow_texture_size
-            , self.arrow_texture_size, self.arrow_left_texture)
-        elif arrow == self.gameTracker.playerBtnInfo.BTN_RIGHT:
-            arcade.draw_texture_rectangle(x, y, self.arrow_texture_size
-            , self.arrow_texture_size, self.arrow_right_texture)
-        elif arrow == self.gameTracker.playerBtnInfo.BTN_DOWN:
-            arcade.draw_texture_rectangle(x, y, self.arrow_texture_size
-            , self.arrow_texture_size, self.arrow_down_texture)
+    def draw_phase(self):
+        if self.gameTracker.phaseTracker.current_phase == self.gameTracker.phaseTracker.PHASE_PREP:
+            self.draw_phase_prep()
+        elif self.gameTracker.phaseTracker.current_phase == self.gameTracker.phaseTracker.PHASE_PLAY:
+            self.draw_phase_play()
+        elif self.gameTracker.phaseTracker.current_phase == self.gameTracker.phaseTracker.PHASE_TIMEOUT:
+            self.draw_phase_timeout()
+        elif self.gameTracker.phaseTracker.current_phase == self.gameTracker.phaseTracker.PHASE_GAMEOVER:
+            self.draw_phase_gameover()
+
+    def draw_phase_prep(self):
+        self.draw_timer(self.gameTracker.phaseTracker.current_phase)
+
+    def draw_phase_play(self):
+        self.draw_timer(self.gameTracker.phaseTracker.current_phase)
+
+    def draw_phase_timeout(self):
+        arcade.draw_text("Time's up", 450, 500, arcade.color.RED, 50
+            , align="center", anchor_x="center", anchor_y="center")
+
+    def draw_phase_gameover(self):
+        arcade.draw_text("Game Over", 450, 500, arcade.color.BLACK, 50
+            , align="center", anchor_x="center", anchor_y="center")
+
+    def draw_timer(self, phase):
+        timer_position_x = 450
+        timer_position_y = 500
+        timer_size = 50
+        time_remain = self.get_time_remain()
+        timer_color = self.get_timer_color(time_remain)
+
+        arcade.draw_text(str(math.ceil(time_remain)), timer_position_x, timer_position_y
+            , timer_color, timer_size, align="center"
+            , anchor_x="center", anchor_y="center")
+
+    def get_time_remain(self):
+        time_remain = self.gameTracker.phaseTracker.PHASE_TIME[self.gameTracker.phaseTracker.current_phase + 1] - self.gameTracker.phaseTracker.time_from_start
+        if time_remain < 0.0:
+            time_remain = 0.0
+
+        return time_remain
+
+    def get_timer_color(self, time_remain):
+        if time_remain > 30 :
+            return arcade.color.BLACK
+        elif time_remain > 20 :
+            return arcade.color.GIANTS_ORANGE
+        elif time_remain > 10 :
+            return arcade.color.ORANGE_RED
+        elif time_remain > 5 :
+            return arcade.color.RED
+        else :
+            return arcade.color.RED_DEVIL
 
 
 if __name__=='__main__':

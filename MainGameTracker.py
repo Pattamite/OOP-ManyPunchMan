@@ -10,10 +10,12 @@ class GameTracker:
         self.phaseTracker = PhaseTracker()
 
     def on_key_press(self, key, key_modifiers):
-        self.userInputHandlerInGame.on_key_press(key, key_modifiers)
+        if(self.phaseTracker.current_phase == self.phaseTracker.PHASE_PLAY):
+            self.userInputHandlerInGame.on_key_press(key, key_modifiers)
 
     def on_key_release(self, key, key_modifiers):
-        self.userInputHandlerInGame.on_key_release(key, key_modifiers)
+        if(self.phaseTracker.current_phase == self.phaseTracker.PHASE_PLAY):
+            self.userInputHandlerInGame.on_key_release(key, key_modifiers)
 
     def update(self, delta_time):
         self.phaseTracker.update(delta_time)
@@ -21,6 +23,7 @@ class GameTracker:
 class PlayerBtnInfo:
     def __init__(self):
         self.MAX_QUEUE = 6
+        self.BLOCK_QUEUE = 2
         self.BTN_TOTAL = 4
         self.BTN_UP = 0
         self.BTN_LEFT = 1
@@ -147,13 +150,13 @@ class PhaseTracker:
         self.PHASE_PLAY = 1
         self.PHASE_TIMEOUT = 2
         self.PHASE_GAMEOVER = 3
-        self.PHASE_TIME = [10.0, 70.0, 74.0]
+        self.PHASE_TIME = [0.0, 10.0, 70.0, 74.0]
 
         self.time_from_start = 0.0
         self.current_phase = self.PHASE_PREP
 
     def update(self, delta_time):
-        self.time_from_start += deltatime
-        if current_phase < PHASE_GAMEOVER:
-            if time_from_start > PHASE_TIME[current_phase]:
-                current_phase += 1
+        self.time_from_start += delta_time
+        if self.current_phase < self.PHASE_GAMEOVER:
+            if self.time_from_start > self.PHASE_TIME[self.current_phase + 1]:
+                self.current_phase += 1
