@@ -5,9 +5,10 @@ class GameTracker:
     def __init__(self):
         self.playerBtnInfo = PlayerBtnInfo()
         self.playerScoreInfo = PlayerScoreInfo()
+        self.gameSound = GameSound()
         self.userInputHandlerInGame = UserInputHandlerInGame(self.playerBtnInfo
-            , self.playerScoreInfo)
-        self.phaseTracker = PhaseTracker()
+            , self.playerScoreInfo, self.gameSound)
+        self.phaseTracker = PhaseTracker(self.gameSound)
         self.userInputHandlerInGameOver = UserInputHandlerInGameOver(self.playerBtnInfo
             , self.playerScoreInfo, self.phaseTracker)
 
@@ -25,6 +26,13 @@ class GameTracker:
     def update(self, delta_time):
         self.phaseTracker.update(delta_time)
         self.userInputHandlerInGame.update(delta_time)
+
+class GameSound:
+    def __init__(self):
+        self.soundtrack = arcade.sound.load_sound("sounds/SoundTrack.mp3")
+        self.time_up = arcade.sound.load_sound("sounds/TimeUp.mp3")
+        self.game_over = arcade.sound.load_sound("sounds/GameOver.wav")
+        self.incorrect = arcade.sound.load_sound("sounds/InCorrect.mp3")
 
 class PlayerBtnInfo:
     def __init__(self):
@@ -120,10 +128,11 @@ class PlayerScoreInfo:
         self.player_2_combo = 0
 
 class UserInputHandlerInGame:
-    def __init__(self, btnInfo, scoreInfo):
+    def __init__(self, btnInfo, scoreInfo, gameSound):
         self.INCORRECT_PAUSE_TIME = 1.5
         self.btnInfo = btnInfo
         self.scoreInfo = scoreInfo
+        self.gameSound = gameSound
         self.player_1_btn_ready = True
         self.player_2_btn_ready = True
         self.player_1_disable_block = False
@@ -212,6 +221,7 @@ class UserInputHandlerInGame:
             else:
                 self.scoreInfo.update(1, False)
                 self.player_1_pause_time = self.INCORRECT_PAUSE_TIME
+                arcade.sound.play_sound(self.gameSound.incorrect)
         elif player == 2:
             if self.btnInfo.player_2_btn[0] == input:
                 self.scoreInfo.update(2, True)
@@ -219,6 +229,7 @@ class UserInputHandlerInGame:
             else:
                 self.scoreInfo.update(2, False)
                 self.player_2_pause_time = self.INCORRECT_PAUSE_TIME
+                arcade.sound.play_sound(self.gameSound.incorrect)
 
     def get_player_1_pause_time(self):
         return self.player_1_pause_time / self.INCORRECT_PAUSE_TIME
@@ -239,7 +250,9 @@ class UserInputHandlerInGameOver:
             self.phaseInfo.reset()
 
 class PhaseTracker:
-    def __init__(self):
+    def __init__(self, gameSound):
+        self.gameSound = gameSound
+
         self.PHASE_PREP = 0
         self.PHASE_PLAY = 1
         self.PHASE_TIMEOUT = 2
@@ -254,6 +267,13 @@ class PhaseTracker:
         if self.current_phase < self.PHASE_GAMEOVER:
             if self.time_from_start > self.PHASE_TIME[self.current_phase + 1]:
                 self.current_phase += 1
+                if self.current_phase == self.PHASE_PLAY:
+                    arcade.sound.play_sound(self.gameSound.soundtrack)
+                elif self.current_phase == self.PHASE_TIMEOUT:
+                    arcade.sound.play_sound(self.gameSound.time_up)
+                elif self.current_phase == self.PHASE_GAMEOVER:
+                    arcade.sound.play_sound(self.gameSound.game_over)
+
     def reset(self):
         self.time_from_start = 0.0
         self.current_phase = self.PHASE_PREP
