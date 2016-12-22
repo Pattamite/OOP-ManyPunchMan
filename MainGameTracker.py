@@ -164,6 +164,7 @@ class UserInputHandlerInGame:
             self.player_1_btn_ready = False
             self.player_1_disable_block = True
             self.scoreInfo.reduce_score(1)
+            self.scoreInfo.edit_combo(1, False)
 
 
         if (key == arcade.key.UP and self.player_2_btn_ready
@@ -187,6 +188,7 @@ class UserInputHandlerInGame:
             self.player_2_btn_ready = False
             self.player_2_disable_block = True
             self.scoreInfo.reduce_score(2)
+            self.scoreInfo.edit_combo(2, False)
 
     def on_key_release(self, key, modifiers):
         if (key == arcade.key.W or key == arcade.key.A
@@ -255,3 +257,17 @@ class PhaseTracker:
     def reset(self):
         self.time_from_start = 0.0
         self.current_phase = self.PHASE_PREP
+
+    def get_prep_time(self):
+        return 1.0 - (self.time_from_start / self.PHASE_TIME[1])
+
+    def get_timer_time(self):
+        return 1.0 - ((self.time_from_start - self.PHASE_TIME[1])
+            / (self.PHASE_TIME[2] - self.PHASE_TIME[1]))
+
+    def get_time_remain(self):
+        time_remain = self.PHASE_TIME[self.current_phase + 1] - self.time_from_start
+        if time_remain < 0.0:
+            time_remain = 0.0
+
+        return time_remain

@@ -18,12 +18,19 @@ class MainGameWindow(arcade.Window):
         self.block_unknown_texture = arcade.load_texture("images/arrow/block_unknown.png")
         self.bar_pause = arcade.load_texture("images/bar/pause_bar.png")
         self.bar_pause_progress = arcade.load_texture("images/bar/pause_progress.png")
+        self.bar_prep = arcade.load_texture("images/bar/prep_bar.png")
+        self.bar_prep_progress = arcade.load_texture("images/bar/prep_progress.png")
+        self.how_to_play_texture = arcade.load_texture("images/HowToPlay.png")
         self.arrow_texture_size = 50
         self.block_unknown_texture_size = 50
         self.bar_pause_size_x = 306
         self.bar_pause_size_y = 12
         self.bar_pause_progress_size_x = 300
         self.bar_pause_progress_size_y = 6
+        self.bar_prep_size_x = 510
+        self.bar_prep_size_y = 20
+        self.bar_prep_progress_size_x = 500
+        self.bar_prep_progress_size_y = 10
 
     def on_key_press(self, key, key_modifiers):
         self.gameTracker.on_key_press(key, key_modifiers)
@@ -37,6 +44,7 @@ class MainGameWindow(arcade.Window):
     def on_draw(self):
         arcade.start_render()
         self.draw_btn()
+        self.draw_how_to()
         self.draw_score()
         self.draw_combo()
         self.draw_phase()
@@ -68,20 +76,23 @@ class MainGameWindow(arcade.Window):
     def draw_arrow(self, arrow, x, y):
         if arrow == self.gameTracker.playerBtnInfo.BTN_UP:
             arcade.draw_texture_rectangle(x, y, self.arrow_texture_size
-            , self.arrow_texture_size, self.arrow_up_texture)
+                , self.arrow_texture_size, self.arrow_up_texture)
         elif arrow == self.gameTracker.playerBtnInfo.BTN_LEFT:
             arcade.draw_texture_rectangle(x, y, self.arrow_texture_size
-            , self.arrow_texture_size, self.arrow_left_texture)
+                , self.arrow_texture_size, self.arrow_left_texture)
         elif arrow == self.gameTracker.playerBtnInfo.BTN_RIGHT:
             arcade.draw_texture_rectangle(x, y, self.arrow_texture_size
-            , self.arrow_texture_size, self.arrow_right_texture)
+                , self.arrow_texture_size, self.arrow_right_texture)
         elif arrow == self.gameTracker.playerBtnInfo.BTN_DOWN:
             arcade.draw_texture_rectangle(x, y, self.arrow_texture_size
-            , self.arrow_texture_size, self.arrow_down_texture)
+                , self.arrow_texture_size, self.arrow_down_texture)
 
     def draw_block_unknown(self, x, y):
         arcade.draw_texture_rectangle(x, y, self.block_unknown_texture_size
-        , self.block_unknown_texture_size, self.block_unknown_texture)
+            , self.block_unknown_texture_size, self.block_unknown_texture)
+
+    def draw_how_to(self):
+        arcade.draw_texture_rectangle(450, 110, 882, 205, self.how_to_play_texture)
 
     def draw_score(self):
         player_1_score_position_x = 400
@@ -171,10 +182,13 @@ class MainGameWindow(arcade.Window):
             self.draw_phase_gameover()
 
     def draw_phase_prep(self):
-        self.draw_timer(self.gameTracker.phaseTracker.current_phase)
+        arcade.draw_text("Remember the Sequence", 450, 550, arcade.color.BLACK, 50
+            , align="center", anchor_x="center", anchor_y="center")
+        self.draw_prep_bar()
 
     def draw_phase_play(self):
         self.draw_timer(self.gameTracker.phaseTracker.current_phase)
+        self.draw_timer_bar()
         self.draw_pause_bar()
 
     def draw_phase_timeout(self):
@@ -197,6 +211,24 @@ class MainGameWindow(arcade.Window):
         else:
             arcade.draw_text("Draw", text_x, text_y, arcade.color.BLACK
                 , text_size , align="center", anchor_x="center", anchor_y="center")
+
+    def draw_prep_bar(self):
+        prep_bar_x = 450
+        prep_bar_y = 475
+        arcade.draw_texture_rectangle(prep_bar_x, prep_bar_y
+            , self.bar_prep_size_x, self.bar_prep_size_y, self.bar_prep)
+        arcade.draw_texture_rectangle(prep_bar_x, prep_bar_y
+            , self.bar_prep_progress_size_x * self.gameTracker.phaseTracker.get_prep_time()
+            , self.bar_prep_progress_size_y, self.bar_prep_progress)
+
+    def draw_timer_bar(self):
+        prep_bar_x = 450
+        prep_bar_y = 475
+        arcade.draw_texture_rectangle(prep_bar_x, prep_bar_y
+            , self.bar_prep_size_x, self.bar_prep_size_y, self.bar_prep)
+        arcade.draw_texture_rectangle(prep_bar_x, prep_bar_y
+            , self.bar_prep_progress_size_x * self.gameTracker.phaseTracker.get_timer_time()
+            , self.bar_prep_progress_size_y, self.bar_prep_progress)
 
     def draw_pause_bar(self):
         player_1_bar_x = 225
@@ -223,21 +255,16 @@ class MainGameWindow(arcade.Window):
 
     def draw_timer(self, phase):
         timer_position_x = 450
-        timer_position_y = 500
+        timer_position_y = 550
         timer_size = 50
-        time_remain = self.get_time_remain()
+        time_remain = self.gameTracker.phaseTracker.get_time_remain()
         timer_color = self.get_timer_color(time_remain)
 
         arcade.draw_text(str(math.ceil(time_remain)), timer_position_x, timer_position_y
             , timer_color, timer_size, align="center"
             , anchor_x="center", anchor_y="center")
 
-    def get_time_remain(self):
-        time_remain = self.gameTracker.phaseTracker.PHASE_TIME[self.gameTracker.phaseTracker.current_phase + 1] - self.gameTracker.phaseTracker.time_from_start
-        if time_remain < 0.0:
-            time_remain = 0.0
 
-        return time_remain
 
     def get_timer_color(self, time_remain):
         if time_remain > 30 :
