@@ -26,11 +26,12 @@ class MainGameWindow(arcade.Window):
         arcade.start_render()
         self.draw_btn()
         self.draw_score()
+        self.draw_combo()
 
     def draw_btn(self):
-        player_1_btn_position_x = 100
+        player_1_btn_position_x = 70
         player_1_btn_position_y = 400
-        player_2_btn_position_x = 550
+        player_2_btn_position_x = 520
         player_2_btn_position_y = 400
         player_btn_x_offset = 60
 
@@ -44,19 +45,72 @@ class MainGameWindow(arcade.Window):
 
 
     def draw_score(self):
-        player_1_score_position_x = 235
+        player_1_score_position_x = 400
+        player_1_score_text_position_x = 50
         player_1_score_position_y = 300
-        player_2_score_position_x = 685
+
+        player_2_score_position_x = 850
+        player_2_score_text_position_x = 500
         player_2_score_position_y = 300
+
+        score_font_size = 40
+
+        arcade.draw_text("Score : "
+            , player_1_score_text_position_x, player_1_score_position_y
+            , arcade.color.BLACK, score_font_size, align="left"
+            , anchor_x="left", anchor_y="center")
+        arcade.draw_text("Score : "
+            , player_2_score_text_position_x, player_1_score_position_y
+            , arcade.color.BLACK, score_font_size, align="left"
+            , anchor_x="left", anchor_y="center")
 
         arcade.draw_text(str(self.gameTracker.playerScoreInfo.player_1_score)
             , player_1_score_position_x, player_1_score_position_y
-            , arcade.color.BLACK, 50, align="center"
-            , anchor_x="center", anchor_y="center")
+            , arcade.color.BLACK, score_font_size, align="right"
+            , anchor_x="right", anchor_y="center")
         arcade.draw_text(str(self.gameTracker.playerScoreInfo.player_2_score)
             , player_2_score_position_x, player_2_score_position_y
-            , arcade.color.BLACK, 50, align="center"
-            , anchor_x="center", anchor_y="center")
+            , arcade.color.BLACK, score_font_size, align="right"
+            , anchor_x="right", anchor_y="center")
+
+    def draw_combo(self):
+        player_1_combo_position_x = 400
+        player_1_combo_text_position_x = 50
+        player_1_combo_position_y = 240
+        player_1_combo_color = self.get_combo_color(self.gameTracker.playerScoreInfo.player_1_combo)
+
+        player_2_combo_position_x = 850
+        player_2_combo_text_position_x = 500
+        player_2_combo_position_y = 240
+        player_2_combo_color = self.get_combo_color(self.gameTracker.playerScoreInfo.player_2_combo)
+
+        combo_font_size = 40
+
+        arcade.draw_text("Combo : "
+            , player_1_combo_text_position_x, player_1_combo_position_y
+            , player_1_combo_color, combo_font_size, align="left"
+            , anchor_x="left", anchor_y="center")
+        arcade.draw_text("Combo : "
+            , player_2_combo_text_position_x, player_2_combo_position_y
+            , player_2_combo_color, combo_font_size, align="left"
+            , anchor_x="left", anchor_y="center")
+
+        arcade.draw_text(str(self.gameTracker.playerScoreInfo.player_1_combo)
+            , player_1_combo_position_x, player_1_combo_position_y
+            , player_1_combo_color, combo_font_size, align="right"
+            , anchor_x="right", anchor_y="center")
+        arcade.draw_text(str(self.gameTracker.playerScoreInfo.player_2_combo)
+            , player_2_combo_position_x, player_2_combo_position_y
+            , player_2_combo_color, combo_font_size, align="right"
+            , anchor_x="right", anchor_y="center")
+
+    def get_combo_color(self, combo):
+        if combo < 10:
+            return arcade.color.BLACK
+        elif combo < 20:
+            return arcade.color.ORANGE
+        else:
+            return arcade.color.RED
 
     def draw_arrow(self, arrow, x, y):
         if arrow == self.gameTracker.playerBtnInfo.BTN_UP:
