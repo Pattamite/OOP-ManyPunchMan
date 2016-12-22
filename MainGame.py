@@ -58,10 +58,12 @@ class MainGameWindow(arcade.Window):
 
             if(i < self.gameTracker.playerBtnInfo.BLOCK_QUEUE
                 and self.gameTracker.phaseTracker.current_phase == self.gameTracker.phaseTracker.PHASE_PLAY):
-                self.draw_block_unknown(player_1_btn_position_x + (i * player_btn_x_offset)
-                    , player_1_btn_position_y)
-                self.draw_block_unknown(player_2_btn_position_x + (i * player_btn_x_offset)
-                    , player_2_btn_position_y)
+                if self.gameTracker.userInputHandlerInGame.player_1_disable_block == False:
+                    self.draw_block_unknown(player_1_btn_position_x + (i * player_btn_x_offset)
+                        , player_1_btn_position_y)
+                if self.gameTracker.userInputHandlerInGame.player_2_disable_block == False:
+                    self.draw_block_unknown(player_2_btn_position_x + (i * player_btn_x_offset)
+                        , player_2_btn_position_y)
 
     def draw_arrow(self, arrow, x, y):
         if arrow == self.gameTracker.playerBtnInfo.BTN_UP:

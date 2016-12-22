@@ -72,6 +72,7 @@ class PlayerScoreInfo:
         self.score_1_combo = 100
         self.score_10_combo = 150
         self.score_20_combo = 200
+        self.score_reduce = 300
 
     def update(self, player, isCorrect):
         self.edit_combo(player, isCorrect)
@@ -106,6 +107,12 @@ class PlayerScoreInfo:
             else:
                 self.player_2_score += self.score_20_combo
 
+    def reduce_score(self,player):
+        if player == 1:
+            self.player_1_score -= self.score_reduce
+        elif player == 2:
+            self.player_2_score -= self.score_reduce
+
     def reset(self):
         self.player_1_score = 0
         self.player_2_score = 0
@@ -119,6 +126,8 @@ class UserInputHandlerInGame:
         self.scoreInfo = scoreInfo
         self.player_1_btn_ready = True
         self.player_2_btn_ready = True
+        self.player_1_disable_block = False
+        self.player_2_disable_block = False
         self.player_1_pause_time = 0.0
         self.player_2_pause_time = 0.0
 
@@ -150,6 +159,12 @@ class UserInputHandlerInGame:
             and self.player_1_pause_time <= 0.0):
             self.player_1_btn_ready = False
             self.checkInput(1, self.btnInfo.BTN_RIGHT)
+        elif (key == arcade.key.SPACE and self.player_1_btn_ready
+            and self.player_1_pause_time <= 0.0):
+            self.player_1_btn_ready = False
+            self.player_1_disable_block = True
+            self.scoreInfo.reduce_score(1)
+
 
         if (key == arcade.key.UP and self.player_2_btn_ready
             and self.player_2_pause_time <= 0.0):
@@ -167,14 +182,25 @@ class UserInputHandlerInGame:
             and self.player_2_pause_time <= 0.0):
             self.player_2_btn_ready = False
             self.checkInput(2, self.btnInfo.BTN_RIGHT)
+        elif (key == arcade.key.NUM_0 and self.player_1_btn_ready
+            and self.player_1_pause_time <= 0.0):
+            self.player_2_btn_ready = False
+            self.player_2_disable_block = True
+            self.scoreInfo.reduce_score(2)
 
     def on_key_release(self, key, modifiers):
         if (key == arcade.key.W or key == arcade.key.A
             or key == arcade.key.S or key == arcade.key.D):
                 self.player_1_btn_ready = True
+        elif key == arcade.key.SPACE:
+            self.player_1_btn_ready = True
+            self.player_1_disable_block = False
         elif (key == arcade.key.UP or key == arcade.key.LEFT
             or key == arcade.key.DOWN or key == arcade.key.RIGHT):
                 self.player_2_btn_ready = True
+        elif key == arcade.key.NUM_0:
+            self.player_2_btn_ready = True
+            self.player_2_disable_block = False
 
     def checkInput(self, player, input):
         if player == 1:
