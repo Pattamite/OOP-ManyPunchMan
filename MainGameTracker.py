@@ -5,14 +5,14 @@ class GameTracker:
     def __init__(self):
         self.playerBtnInfo = PlayerBtnInfo()
         self.playerScoreInfo = PlayerScoreInfo()
-        self.userInputhandler = UserInputhandler(self.playerBtnInfo
+        self.userInputHandlerInGame = UserInputHandlerInGame(self.playerBtnInfo
             , self.playerScoreInfo)
 
     def on_key_press(self, key, key_modifiers):
-        self.userInputhandler.on_key_press(key, key_modifiers)
+        self.userInputHandlerInGame.on_key_press(key, key_modifiers)
 
     def on_key_release(self, key, key_modifiers):
-        self.userInputhandler.on_key_release(key, key_modifiers)
+        self.userInputHandlerInGame.on_key_release(key, key_modifiers)
 
 class PlayerBtnInfo:
     def __init__(self):
@@ -82,7 +82,7 @@ class PlayerScoreInfo:
             else:
                 self.player_2_score += self.score_20_combo
 
-class UserInputhandler:
+class UserInputHandlerInGame:
     def __init__(self, btnInfo, scoreInfo):
         self.btnInfo = btnInfo
         self.scoreInfo = scoreInfo

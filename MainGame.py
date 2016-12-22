@@ -78,30 +78,30 @@ class MainGameWindow(arcade.Window):
         player_1_combo_text_position_x = 50
         player_1_combo_position_y = 240
         player_1_combo_color = self.get_combo_color(self.gameTracker.playerScoreInfo.player_1_combo)
+        player_1_combo_size = self.get_combo_size(self.gameTracker.playerScoreInfo.player_1_combo)
 
         player_2_combo_position_x = 850
         player_2_combo_text_position_x = 500
         player_2_combo_position_y = 240
         player_2_combo_color = self.get_combo_color(self.gameTracker.playerScoreInfo.player_2_combo)
-
-        combo_font_size = 40
+        player_2_combo_size = self.get_combo_size(self.gameTracker.playerScoreInfo.player_2_combo)
 
         arcade.draw_text("Combo : "
             , player_1_combo_text_position_x, player_1_combo_position_y
-            , player_1_combo_color, combo_font_size, align="left"
+            , player_1_combo_color, player_1_combo_size, align="left"
             , anchor_x="left", anchor_y="center")
         arcade.draw_text("Combo : "
             , player_2_combo_text_position_x, player_2_combo_position_y
-            , player_2_combo_color, combo_font_size, align="left"
+            , player_2_combo_color, player_2_combo_size, align="left"
             , anchor_x="left", anchor_y="center")
 
         arcade.draw_text(str(self.gameTracker.playerScoreInfo.player_1_combo)
             , player_1_combo_position_x, player_1_combo_position_y
-            , player_1_combo_color, combo_font_size, align="right"
+            , player_1_combo_color, player_1_combo_size, align="right"
             , anchor_x="right", anchor_y="center")
         arcade.draw_text(str(self.gameTracker.playerScoreInfo.player_2_combo)
             , player_2_combo_position_x, player_2_combo_position_y
-            , player_2_combo_color, combo_font_size, align="right"
+            , player_2_combo_color, player_2_combo_size, align="right"
             , anchor_x="right", anchor_y="center")
 
     def get_combo_color(self, combo):
@@ -109,8 +109,17 @@ class MainGameWindow(arcade.Window):
             return arcade.color.BLACK
         elif combo < 20:
             return arcade.color.ORANGE
-        else:
+        elif combo % 2 == 0:
             return arcade.color.RED
+        else:
+            return arcade.color.CADMIUM_RED
+    def get_combo_size(self, combo):
+        if combo < 10:
+            return 20
+        elif combo < 20:
+            return 30
+        else:
+            return 40
 
     def draw_arrow(self, arrow, x, y):
         if arrow == self.gameTracker.playerBtnInfo.BTN_UP:
