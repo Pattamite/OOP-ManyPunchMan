@@ -180,8 +180,21 @@ class MainGameWindow(arcade.Window):
             , align="center", anchor_x="center", anchor_y="center")
 
     def draw_phase_gameover(self):
-        arcade.draw_text("Game Over", 450, 500, arcade.color.BLACK, 50
-            , align="center", anchor_x="center", anchor_y="center")
+        player_1 = self.gameTracker.playerScoreInfo.player_1_score
+        player_2 = self.gameTracker.playerScoreInfo.player_2_score
+        text_x = 450
+        text_y = 500
+        text_size = 50
+
+        if(player_1 > player_2):
+            arcade.draw_text("Player 1 Win", text_x, text_y, arcade.color.RED
+                , text_size , align="center", anchor_x="center", anchor_y="center")
+        elif(player_1 < player_2):
+            arcade.draw_text("Player 2 Win", text_x, text_y, arcade.color.BLUE
+                , text_size , align="center", anchor_x="center", anchor_y="center")
+        else:
+            arcade.draw_text("Draw", text_x, text_y, arcade.color.BLACK
+                , text_size , align="center", anchor_x="center", anchor_y="center")
 
     def draw_pause_bar(self):
         player_1_bar_x = 225
@@ -199,7 +212,12 @@ class MainGameWindow(arcade.Window):
                 , self.bar_pause_progress_size_x * player_1_pause
                 , self.bar_pause_progress_size_y, self.bar_pause_progress)
 
-
+        if player_2_pause > 0.0 :
+            arcade.draw_texture_rectangle(player_2_bar_x, player_2_bar_y
+                , self.bar_pause_size_x, self.bar_pause_size_y, self.bar_pause)
+            arcade.draw_texture_rectangle(player_2_bar_x, player_2_bar_y
+                , self.bar_pause_progress_size_x * player_2_pause
+                , self.bar_pause_progress_size_y, self.bar_pause_progress)
 
     def draw_timer(self, phase):
         timer_position_x = 450

@@ -8,13 +8,18 @@ class GameTracker:
         self.userInputHandlerInGame = UserInputHandlerInGame(self.playerBtnInfo
             , self.playerScoreInfo)
         self.phaseTracker = PhaseTracker()
+        self.userInputHandlerInGameOver = UserInputHandlerInGameOver(self.playerBtnInfo
+            , self.playerScoreInfo, self.phaseTracker)
 
     def on_key_press(self, key, key_modifiers):
-        if(self.phaseTracker.current_phase == self.phaseTracker.PHASE_PLAY):
+        if self.phaseTracker.current_phase == self.phaseTracker.PHASE_PLAY:
             self.userInputHandlerInGame.on_key_press(key, key_modifiers)
+        elif  self.phaseTracker.current_phase == self.phaseTracker.PHASE_GAMEOVER:
+            self.userInputHandlerInGameOver.on_key_press(key, key_modifiers)
+
 
     def on_key_release(self, key, key_modifiers):
-        if(self.phaseTracker.current_phase == self.phaseTracker.PHASE_PLAY):
+        if self.phaseTracker.current_phase == self.phaseTracker.PHASE_PLAY:
             self.userInputHandlerInGame.on_key_release(key, key_modifiers)
 
     def update(self, delta_time):
@@ -44,6 +49,17 @@ class PlayerBtnInfo:
             self.player_1_btn.append(random.randrange(self.BTN_TOTAL))
         elif player == 2:
             del self.player_2_btn[0]
+            self.player_2_btn.append(random.randrange(self.BTN_TOTAL))
+
+    def reset(self):
+        del self.player_1_btn
+        del self.player_2_btn
+
+        self.player_1_btn = []
+        self.player_2_btn = []
+
+        for i in range(self.MAX_QUEUE):
+            self.player_1_btn.append(random.randrange(self.BTN_TOTAL))
             self.player_2_btn.append(random.randrange(self.BTN_TOTAL))
 
 class PlayerScoreInfo:
@@ -89,6 +105,12 @@ class PlayerScoreInfo:
                 self.player_2_score += self.score_10_combo
             else:
                 self.player_2_score += self.score_20_combo
+
+    def reset(self):
+        self.player_1_score = 0
+        self.player_2_score = 0
+        self.player_1_combo = 0
+        self.player_2_combo = 0
 
 class UserInputHandlerInGame:
     def __init__(self, btnInfo, scoreInfo):
@@ -169,11 +191,24 @@ class UserInputHandlerInGame:
             else:
                 self.scoreInfo.update(2, False)
                 self.player_2_pause_time = self.INCORRECT_PAUSE_TIME
+
     def get_player_1_pause_time(self):
         return self.player_1_pause_time / self.INCORRECT_PAUSE_TIME
 
     def get_player_2_pause_time(self):
         return self.player_2_pause_time / self.INCORRECT_PAUSE_TIME
+
+class UserInputHandlerInGameOver:
+    def __init__(self, btnInfo, scoreInfo, phaseInfo):
+        self.btnInfo = btnInfo
+        self.scoreInfo = scoreInfo
+        self.phaseInfo = phaseInfo
+
+    def on_key_press(self, key, key_modifiers):
+        if key == arcade.key.R:
+            self.btnInfo.reset()
+            self.scoreInfo.reset()
+            self.phaseInfo.reset()
 
 class PhaseTracker:
     def __init__(self):
@@ -191,3 +226,6 @@ class PhaseTracker:
         if self.current_phase < self.PHASE_GAMEOVER:
             if self.time_from_start > self.PHASE_TIME[self.current_phase + 1]:
                 self.current_phase += 1
+    def reset(self):
+        self.time_from_start = 0.0
+        self.current_phase = self.PHASE_PREP
