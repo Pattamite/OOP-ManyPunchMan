@@ -5,29 +5,134 @@ class GameTracker:
     def __init__(self):
         self.playerBtnInfo = PlayerBtnInfo()
         self.playerScoreInfo = PlayerScoreInfo()
+        self.userInputhandler = UserInputhandler(self.playerBtnInfo
+            , self.playerScoreInfo)
+
+    def on_key_press(self, key, key_modifiers):
+        self.userInputhandler.on_key_press(key, key_modifiers)
+
+    def on_key_release(self, key, key_modifiers):
+        self.userInputhandler.on_key_release(key, key_modifiers)
 
 class PlayerBtnInfo:
     def __init__(self):
         self.MAX_QUEUE = 6
-        self.BTN_LEFT = 0
-        self.BTN_RIGHT = 1
-        self.BTN_UP = 2
-        self.BTN_DOWN = 3
+        self.BTN_TOTAL = 4
+        self.BTN_UP = 0
+        self.BTN_LEFT = 1
+        self.BTN_DOWN = 2
+        self.BTN_RIGHT = 3
 
         self.player_1_btn = []
         self.player_2_btn = []
 
         for i in range(self.MAX_QUEUE):
-            self.player_1_btn.append(random.randrange(4))
-            self.player_2_btn.append(random.randrange(4))
+            self.player_1_btn.append(random.randrange(self.BTN_TOTAL))
+            self.player_2_btn.append(random.randrange(self.BTN_TOTAL))
+
+    def delete_front(self, player):
+        if player == 1:
+            del self.player_1_btn[0]
+            self.player_1_btn.append(random.randrange(self.BTN_TOTAL))
+        elif player == 2:
+            del self.player_2_btn[0]
+            self.player_2_btn.append(random.randrange(self.BTN_TOTAL))
 
 class PlayerScoreInfo:
     def __init__(self):
         self.player_1_score = 0
         self.player_2_score = 0
+        self.player_1_combo = 0
+        self.player_2_combo = 0
 
-    def edit_Score(self, player, score):
+        self.score_1_combo = 100
+        self.score_10_combo = 150
+        self.score_20_combo = 200
+
+    def update(self, player, isCorrect):
+        self.edit_combo(player, isCorrect)
+        if isCorrect:
+            self.edit_score(player)
+
+    def edit_combo(self, player, isCorrect):
         if player == 1:
-            self.player_1_score += score
+            if isCorrect:
+                self.player_1_combo += 1
+            else:
+                self.player_1_combo = 0
         elif player == 2:
-            self.player_2_score += score
+            if isCorrect:
+                self.player_2_combo += 1
+            else:
+                self.player_2_combo = 0
+
+    def edit_score(self, player):
+        if player == 1:
+            if self.player_1_combo < 10:
+                self.player_1_score += self.score_1_combo
+            elif self.player_1_combo < 20:
+                self.player_1_score += self.score_10_combo
+            else:
+                self.player_1_score += self.score_20_combo
+        elif player == 2:
+            if self.player_2_combo < 10:
+                self.player_2_score += self.score_1_combo
+            elif self.player_2_combo < 20:
+                self.player_2_score += self.score_10_combo
+            else:
+                self.player_2_score += self.score_20_combo
+
+class UserInputhandler:
+    def __init__(self, btnInfo, scoreInfo):
+        self.btnInfo = btnInfo
+        self.scoreInfo = scoreInfo
+        self.player_1_btn_ready = True
+        self.player_2_btn_ready = True
+
+
+    def on_key_press(self, key, key_modifiers):
+        if key == arcade.key.W and self.player_1_btn_ready:
+            self.player_1_btn_ready = False
+            self.checkInput(1, self.btnInfo.BTN_UP)
+        elif key == arcade.key.A and self.player_1_btn_ready:
+            self.player_1_btn_ready = False
+            self.checkInput(1, self.btnInfo.BTN_LEFT)
+        elif key == arcade.key.S and self.player_1_btn_ready:
+            self.player_1_btn_ready = False
+            self.checkInput(1, self.btnInfo.BTN_DOWN)
+        elif key == arcade.key.D and self.player_1_btn_ready:
+            self.player_1_btn_ready = False
+            self.checkInput(1, self.btnInfo.BTN_RIGHT)
+
+        if key == arcade.key.UP and self.player_2_btn_ready:
+            self.player_2_btn_ready = False
+            self.checkInput(2, self.btnInfo.BTN_UP)
+        elif key == arcade.key.LEFT and self.player_2_btn_ready:
+            self.player_2_btn_ready = False
+            self.checkInput(2, self.btnInfo.BTN_LEFT)
+        elif key == arcade.key.DOWN and self.player_2_btn_ready:
+            self.player_2_btn_ready = False
+            self.checkInput(2, self.btnInfo.BTN_DOWN)
+        elif key == arcade.key.RIGHT and self.player_2_btn_ready:
+            self.player_2_btn_ready = False
+            self.checkInput(2, self.btnInfo.BTN_RIGHT)
+
+    def on_key_release(self, key, modifiers):
+        if key == arcade.key.W or key == arcade.key.A or key == arcade.key.S or key == arcade.key.D:
+                self.player_1_btn_ready = True
+        elif key == arcade.key.UP or key == arcade.key.LEFT or key == arcade.key.DOWN or key == arcade.key.RIGHT:
+                self.player_2_btn_ready = True
+
+    def checkInput(self, player, input):
+        if player == 1:
+            if self.btnInfo.player_1_btn[0] == input:
+                self.scoreInfo.update(1, True)
+                self.btnInfo.delete_front(1)
+            else:
+                self.scoreInfo.update(1, False)
+        elif player == 2:
+            if self.btnInfo.player_2_btn[0] == input:
+                self.scoreInfo.update(2, True)
+                self.btnInfo.delete_front(2)
+            else:
+                self.scoreInfo.update(2, False)
