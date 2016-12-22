@@ -15,7 +15,9 @@ class MainGameWindow(arcade.Window):
         self.arrow_down_texture = arcade.load_texture("images/arrow_down.png")
         self.arrow_left_texture = arcade.load_texture("images/arrow_left.png")
         self.arrow_right_texture = arcade.load_texture("images/arrow_right.png")
+        self.block_unknown_texture = arcade.load_texture("images/block_unknown.png")
         self.arrow_texture_size = 50
+        self.block_unknown_texture_size = 50
 
     def on_key_press(self, key, key_modifiers):
         self.gameTracker.on_key_press(key, key_modifiers)
@@ -48,6 +50,13 @@ class MainGameWindow(arcade.Window):
                 , player_2_btn_position_x + (i * player_btn_x_offset)
                 , player_2_btn_position_y)
 
+            if(i < self.gameTracker.playerBtnInfo.BLOCK_QUEUE
+                and self.gameTracker.phaseTracker.current_phase == self.gameTracker.phaseTracker.PHASE_PLAY):
+                self.draw_block_unknown(player_1_btn_position_x + (i * player_btn_x_offset)
+                    , player_1_btn_position_y)
+                self.draw_block_unknown(player_2_btn_position_x + (i * player_btn_x_offset)
+                    , player_2_btn_position_y)
+
     def draw_arrow(self, arrow, x, y):
         if arrow == self.gameTracker.playerBtnInfo.BTN_UP:
             arcade.draw_texture_rectangle(x, y, self.arrow_texture_size
@@ -61,6 +70,10 @@ class MainGameWindow(arcade.Window):
         elif arrow == self.gameTracker.playerBtnInfo.BTN_DOWN:
             arcade.draw_texture_rectangle(x, y, self.arrow_texture_size
             , self.arrow_texture_size, self.arrow_down_texture)
+
+    def draw_block_unknown(self, x, y):
+        arcade.draw_texture_rectangle(x, y, self.block_unknown_texture_size
+        , self.block_unknown_texture_size, self.block_unknown_texture)
 
     def draw_score(self):
         player_1_score_position_x = 400

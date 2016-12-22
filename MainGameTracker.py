@@ -125,9 +125,11 @@ class UserInputHandlerInGame:
             self.checkInput(2, self.btnInfo.BTN_RIGHT)
 
     def on_key_release(self, key, modifiers):
-        if key == arcade.key.W or key == arcade.key.A or key == arcade.key.S or key == arcade.key.D:
+        if (key == arcade.key.W or key == arcade.key.A
+            or key == arcade.key.S or key == arcade.key.D):
                 self.player_1_btn_ready = True
-        elif key == arcade.key.UP or key == arcade.key.LEFT or key == arcade.key.DOWN or key == arcade.key.RIGHT:
+        elif (key == arcade.key.UP or key == arcade.key.LEFT
+            or key == arcade.key.DOWN or key == arcade.key.RIGHT):
                 self.player_2_btn_ready = True
 
     def checkInput(self, player, input):
