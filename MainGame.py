@@ -22,6 +22,9 @@ class MainGameWindow(arcade.Window):
     def on_key_release(self, key, key_modifiers):
         self.gameTracker.on_key_release(key, key_modifiers)
 
+    def animate(self, delta_time):
+        self.gameTracker.update(delta_time)
+
     def on_draw(self):
         arcade.start_render()
         self.draw_btn()

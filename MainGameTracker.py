@@ -7,12 +7,16 @@ class GameTracker:
         self.playerScoreInfo = PlayerScoreInfo()
         self.userInputHandlerInGame = UserInputHandlerInGame(self.playerBtnInfo
             , self.playerScoreInfo)
+        self.phaseTracker = PhaseTracker()
 
     def on_key_press(self, key, key_modifiers):
         self.userInputHandlerInGame.on_key_press(key, key_modifiers)
 
     def on_key_release(self, key, key_modifiers):
         self.userInputHandlerInGame.on_key_release(key, key_modifiers)
+
+    def update(self, delta_time):
+        self.phaseTracker.update(delta_time)
 
 class PlayerBtnInfo:
     def __init__(self):
@@ -136,3 +140,20 @@ class UserInputHandlerInGame:
                 self.btnInfo.delete_front(2)
             else:
                 self.scoreInfo.update(2, False)
+
+class PhaseTracker:
+    def __init__(self):
+        self.PHASE_PREP = 0
+        self.PHASE_PLAY = 1
+        self.PHASE_TIMEOUT = 2
+        self.PHASE_GAMEOVER = 3
+        self.PHASE_TIME = [10.0, 70.0, 74.0]
+
+        self.time_from_start = 0.0
+        self.current_phase = self.PHASE_PREP
+
+    def update(self, delta_time):
+        self.time_from_start += deltatime
+        if current_phase < PHASE_GAMEOVER:
+            if time_from_start > PHASE_TIME[current_phase]:
+                current_phase += 1
