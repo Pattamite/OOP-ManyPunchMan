@@ -11,13 +11,19 @@ class MainGameWindow(arcade.Window):
         arcade.set_background_color(arcade.color.WHITE)
 
         self.gameTracker = GameTracker()
-        self.arrow_up_texture = arcade.load_texture("images/arrow_up.png")
-        self.arrow_down_texture = arcade.load_texture("images/arrow_down.png")
-        self.arrow_left_texture = arcade.load_texture("images/arrow_left.png")
-        self.arrow_right_texture = arcade.load_texture("images/arrow_right.png")
-        self.block_unknown_texture = arcade.load_texture("images/block_unknown.png")
+        self.arrow_up_texture = arcade.load_texture("images/arrow/arrow_up.png")
+        self.arrow_down_texture = arcade.load_texture("images/arrow/arrow_down.png")
+        self.arrow_left_texture = arcade.load_texture("images/arrow/arrow_left.png")
+        self.arrow_right_texture = arcade.load_texture("images/arrow/arrow_right.png")
+        self.block_unknown_texture = arcade.load_texture("images/arrow/block_unknown.png")
+        self.bar_pause = arcade.load_texture("images/bar/pause_bar.png")
+        self.bar_pause_progress = arcade.load_texture("images/bar/pause_progress.png")
         self.arrow_texture_size = 50
         self.block_unknown_texture_size = 50
+        self.bar_pause_size_x = 306
+        self.bar_pause_size_y = 12
+        self.bar_pause_progress_size_x = 300
+        self.bar_pause_progress_size_y = 6
 
     def on_key_press(self, key, key_modifiers):
         self.gameTracker.on_key_press(key, key_modifiers)
@@ -167,6 +173,7 @@ class MainGameWindow(arcade.Window):
 
     def draw_phase_play(self):
         self.draw_timer(self.gameTracker.phaseTracker.current_phase)
+        self.draw_pause_bar()
 
     def draw_phase_timeout(self):
         arcade.draw_text("Time's up", 450, 500, arcade.color.RED, 50
@@ -175,6 +182,24 @@ class MainGameWindow(arcade.Window):
     def draw_phase_gameover(self):
         arcade.draw_text("Game Over", 450, 500, arcade.color.BLACK, 50
             , align="center", anchor_x="center", anchor_y="center")
+
+    def draw_pause_bar(self):
+        player_1_bar_x = 225
+        player_1_bar_y = 340
+        player_1_pause = self.gameTracker.userInputHandlerInGame.get_player_1_pause_time()
+
+        player_2_bar_x = 675
+        player_2_bar_y = 340
+        player_2_pause = self.gameTracker.userInputHandlerInGame.get_player_2_pause_time()
+
+        if player_1_pause > 0.0 :
+            arcade.draw_texture_rectangle(player_1_bar_x, player_1_bar_y
+                , self.bar_pause_size_x, self.bar_pause_size_y, self.bar_pause)
+            arcade.draw_texture_rectangle(player_1_bar_x, player_1_bar_y
+                , self.bar_pause_progress_size_x * player_1_pause
+                , self.bar_pause_progress_size_y, self.bar_pause_progress)
+
+
 
     def draw_timer(self, phase):
         timer_position_x = 450

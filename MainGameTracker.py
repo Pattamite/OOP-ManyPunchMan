@@ -19,6 +19,7 @@ class GameTracker:
 
     def update(self, delta_time):
         self.phaseTracker.update(delta_time)
+        self.userInputHandlerInGame.update(delta_time)
 
 class PlayerBtnInfo:
     def __init__(self):
@@ -91,36 +92,57 @@ class PlayerScoreInfo:
 
 class UserInputHandlerInGame:
     def __init__(self, btnInfo, scoreInfo):
+        self.INCORRECT_PAUSE_TIME = 1.5
         self.btnInfo = btnInfo
         self.scoreInfo = scoreInfo
         self.player_1_btn_ready = True
         self.player_2_btn_ready = True
+        self.player_1_pause_time = 0.0
+        self.player_2_pause_time = 0.0
+
+    def update(self, delta_time):
+        if self.player_1_pause_time:
+            self.player_1_pause_time -= delta_time
+            if self.player_1_pause_time < 0:
+                self.player_1_pause_time = 0
+        if self.player_2_pause_time:
+            self.player_2_pause_time -= delta_time
+            if self.player_2_pause_time < 0:
+                self.player_2_pause_time = 0
 
 
     def on_key_press(self, key, key_modifiers):
-        if key == arcade.key.W and self.player_1_btn_ready:
+        if (key == arcade.key.W and self.player_1_btn_ready
+            and self.player_1_pause_time <= 0.0):
             self.player_1_btn_ready = False
             self.checkInput(1, self.btnInfo.BTN_UP)
-        elif key == arcade.key.A and self.player_1_btn_ready:
+        elif (key == arcade.key.A and self.player_1_btn_ready
+            and self.player_1_pause_time <= 0.0):
             self.player_1_btn_ready = False
             self.checkInput(1, self.btnInfo.BTN_LEFT)
-        elif key == arcade.key.S and self.player_1_btn_ready:
+        elif (key == arcade.key.S and self.player_1_btn_ready
+            and self.player_1_pause_time <= 0.0):
             self.player_1_btn_ready = False
             self.checkInput(1, self.btnInfo.BTN_DOWN)
-        elif key == arcade.key.D and self.player_1_btn_ready:
+        elif (key == arcade.key.D and self.player_1_btn_ready
+            and self.player_1_pause_time <= 0.0):
             self.player_1_btn_ready = False
             self.checkInput(1, self.btnInfo.BTN_RIGHT)
 
-        if key == arcade.key.UP and self.player_2_btn_ready:
+        if (key == arcade.key.UP and self.player_2_btn_ready
+            and self.player_2_pause_time <= 0.0):
             self.player_2_btn_ready = False
             self.checkInput(2, self.btnInfo.BTN_UP)
-        elif key == arcade.key.LEFT and self.player_2_btn_ready:
+        elif (key == arcade.key.LEFT and self.player_2_btn_ready
+            and self.player_2_pause_time <= 0.0):
             self.player_2_btn_ready = False
             self.checkInput(2, self.btnInfo.BTN_LEFT)
-        elif key == arcade.key.DOWN and self.player_2_btn_ready:
+        elif (key == arcade.key.DOWN and self.player_2_btn_ready
+            and self.player_2_pause_time <= 0.0):
             self.player_2_btn_ready = False
             self.checkInput(2, self.btnInfo.BTN_DOWN)
-        elif key == arcade.key.RIGHT and self.player_2_btn_ready:
+        elif (key == arcade.key.RIGHT and self.player_2_btn_ready
+            and self.player_2_pause_time <= 0.0):
             self.player_2_btn_ready = False
             self.checkInput(2, self.btnInfo.BTN_RIGHT)
 
@@ -139,12 +161,19 @@ class UserInputHandlerInGame:
                 self.btnInfo.delete_front(1)
             else:
                 self.scoreInfo.update(1, False)
+                self.player_1_pause_time = self.INCORRECT_PAUSE_TIME
         elif player == 2:
             if self.btnInfo.player_2_btn[0] == input:
                 self.scoreInfo.update(2, True)
                 self.btnInfo.delete_front(2)
             else:
                 self.scoreInfo.update(2, False)
+                self.player_2_pause_time = self.INCORRECT_PAUSE_TIME
+    def get_player_1_pause_time(self):
+        return self.player_1_pause_time / self.INCORRECT_PAUSE_TIME
+
+    def get_player_2_pause_time(self):
+        return self.player_2_pause_time / self.INCORRECT_PAUSE_TIME
 
 class PhaseTracker:
     def __init__(self):
