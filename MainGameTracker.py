@@ -32,7 +32,8 @@ class GameSound:
         self.soundtrack = arcade.sound.load_sound("sounds/SoundTrack.mp3")
         self.time_up = arcade.sound.load_sound("sounds/TimeUp.mp3")
         self.game_over = arcade.sound.load_sound("sounds/GameOver.wav")
-        self.incorrect = arcade.sound.load_sound("sounds/InCorrect.mp3")
+        self.incorrect_1 = arcade.sound.load_sound("sounds/InCorrect_1.mp3")
+        self.incorrect_2 = arcade.sound.load_sound("sounds/InCorrect_2.mp3")
 
 class PlayerBtnInfo:
     def __init__(self):
@@ -221,7 +222,7 @@ class UserInputHandlerInGame:
             else:
                 self.scoreInfo.update(1, False)
                 self.player_1_pause_time = self.INCORRECT_PAUSE_TIME
-                arcade.sound.play_sound(self.gameSound.incorrect)
+                arcade.sound.play_sound(self.gameSound.incorrect_1)
         elif player == 2:
             if self.btnInfo.player_2_btn[0] == input:
                 self.scoreInfo.update(2, True)
@@ -229,7 +230,7 @@ class UserInputHandlerInGame:
             else:
                 self.scoreInfo.update(2, False)
                 self.player_2_pause_time = self.INCORRECT_PAUSE_TIME
-                arcade.sound.play_sound(self.gameSound.incorrect)
+                arcade.sound.play_sound(self.gameSound.incorrect_2)
 
     def get_player_1_pause_time(self):
         return self.player_1_pause_time / self.INCORRECT_PAUSE_TIME
