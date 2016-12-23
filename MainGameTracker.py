@@ -10,14 +10,13 @@ class GameTracker:
             , self.playerScoreInfo, self.gameSound)
         self.phaseTracker = PhaseTracker(self.gameSound)
         self.userInputHandlerInGameOver = UserInputHandlerInGameOver(self.playerBtnInfo
-            , self.playerScoreInfo, self.phaseTracker)
+            , self.playerScoreInfo, self.phaseTracker, self.userInputHandlerInGame)
 
     def on_key_press(self, key, key_modifiers):
         if self.phaseTracker.current_phase == self.phaseTracker.PHASE_PLAY:
             self.userInputHandlerInGame.on_key_press(key, key_modifiers)
         elif  self.phaseTracker.current_phase == self.phaseTracker.PHASE_GAMEOVER:
             self.userInputHandlerInGameOver.on_key_press(key, key_modifiers)
-
 
     def on_key_release(self, key, key_modifiers):
         if self.phaseTracker.current_phase == self.phaseTracker.PHASE_PLAY:
@@ -44,13 +43,7 @@ class PlayerBtnInfo:
         self.BTN_LEFT = 1
         self.BTN_DOWN = 2
         self.BTN_RIGHT = 3
-
-        self.player_1_btn = []
-        self.player_2_btn = []
-
-        for i in range(self.MAX_QUEUE):
-            self.player_1_btn.append(random.randrange(self.BTN_TOTAL))
-            self.player_2_btn.append(random.randrange(self.BTN_TOTAL))
+        self.add_all_to_list()
 
     def delete_front(self, player):
         if player == 1:
@@ -64,6 +57,9 @@ class PlayerBtnInfo:
         del self.player_1_btn
         del self.player_2_btn
 
+        self.add_all_to_list()
+
+    def add_all_to_list(self):
         self.player_1_btn = []
         self.player_2_btn = []
 
@@ -73,10 +69,7 @@ class PlayerBtnInfo:
 
 class PlayerScoreInfo:
     def __init__(self):
-        self.player_1_score = 0
-        self.player_2_score = 0
-        self.player_1_combo = 0
-        self.player_2_combo = 0
+        self.set_init_score()
 
         self.score_1_combo = 100
         self.score_10_combo = 150
@@ -123,6 +116,9 @@ class PlayerScoreInfo:
             self.player_2_score -= self.score_reduce
 
     def reset(self):
+        self.set_init_score()
+
+    def set_init_score(self):
         self.player_1_score = 0
         self.player_2_score = 0
         self.player_1_combo = 0
@@ -134,12 +130,7 @@ class UserInputHandlerInGame:
         self.btnInfo = btnInfo
         self.scoreInfo = scoreInfo
         self.gameSound = gameSound
-        self.player_1_btn_ready = True
-        self.player_2_btn_ready = True
-        self.player_1_disable_block = False
-        self.player_2_disable_block = False
-        self.player_1_pause_time = 0.0
-        self.player_2_pause_time = 0.0
+        self.set_var()
 
     def update(self, delta_time):
         if self.player_1_pause_time:
@@ -193,7 +184,7 @@ class UserInputHandlerInGame:
             and self.player_2_pause_time <= 0.0):
             self.player_2_btn_ready = False
             self.checkInput(2, self.btnInfo.BTN_RIGHT)
-        elif (key == arcade.key.NUM_0 and self.player_1_btn_ready
+        elif (key == arcade.key.NUM_0 and self.player_2_btn_ready
             and self.player_1_pause_time <= 0.0):
             self.player_2_btn_ready = False
             self.player_2_disable_block = True
@@ -238,17 +229,30 @@ class UserInputHandlerInGame:
     def get_player_2_pause_time(self):
         return self.player_2_pause_time / self.INCORRECT_PAUSE_TIME
 
+    def reset(self):
+        self.set_var()
+
+    def set_var(self):
+        self.player_1_btn_ready = True
+        self.player_2_btn_ready = True
+        self.player_1_disable_block = False
+        self.player_2_disable_block = False
+        self.player_1_pause_time = 0.0
+        self.player_2_pause_time = 0.0
+
 class UserInputHandlerInGameOver:
-    def __init__(self, btnInfo, scoreInfo, phaseInfo):
+    def __init__(self, btnInfo, scoreInfo, phaseInfo, inputInfo):
         self.btnInfo = btnInfo
         self.scoreInfo = scoreInfo
         self.phaseInfo = phaseInfo
+        self.inputInfo = inputInfo
 
     def on_key_press(self, key, key_modifiers):
         if key == arcade.key.R:
             self.btnInfo.reset()
             self.scoreInfo.reset()
             self.phaseInfo.reset()
+            self.inputInfo.reset()
 
 class PhaseTracker:
     def __init__(self, gameSound):

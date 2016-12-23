@@ -9,7 +9,10 @@ class MainGameWindow(arcade.Window):
     def __init__(self, width, height):
         super().__init__(width, height)
         arcade.set_background_color(arcade.color.WHITE)
+        self.set_texture()
+        self.set_var()
 
+    def set_texture(self):
         self.gameTracker = GameTracker()
         self.arrow_up_texture = arcade.load_texture("images/arrow/arrow_up.png")
         self.arrow_down_texture = arcade.load_texture("images/arrow/arrow_down.png")
@@ -21,6 +24,8 @@ class MainGameWindow(arcade.Window):
         self.bar_prep = arcade.load_texture("images/bar/prep_bar.png")
         self.bar_prep_progress = arcade.load_texture("images/bar/prep_progress.png")
         self.how_to_play_texture = arcade.load_texture("images/HowToPlay.png")
+
+    def set_var(self):
         self.arrow_texture_size = 50
         self.block_unknown_texture_size = 50
         self.bar_pause_size_x = 306
@@ -31,6 +36,7 @@ class MainGameWindow(arcade.Window):
         self.bar_prep_size_y = 20
         self.bar_prep_progress_size_x = 500
         self.bar_prep_progress_size_y = 10
+
 
     def on_key_press(self, key, key_modifiers):
         self.gameTracker.on_key_press(key, key_modifiers)
@@ -163,6 +169,7 @@ class MainGameWindow(arcade.Window):
             return arcade.color.RED
         else:
             return arcade.color.CADMIUM_RED
+
     def get_combo_size(self, combo):
         if combo < 10:
             return 20
@@ -264,8 +271,6 @@ class MainGameWindow(arcade.Window):
             , timer_color, timer_size, align="center"
             , anchor_x="center", anchor_y="center")
 
-
-
     def get_timer_color(self, time_remain):
         if time_remain > 30 :
             return arcade.color.BLACK
@@ -277,7 +282,6 @@ class MainGameWindow(arcade.Window):
             return arcade.color.RED
         else :
             return arcade.color.RED_DEVIL
-
 
 if __name__=='__main__':
     window = MainGameWindow(SCREEN_WIDTH, SCREEN_HEIGHT)
